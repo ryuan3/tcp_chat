@@ -9,6 +9,17 @@ connections_list = []
 #save all pairs of clients and their connections
 name_dic = {}
 
+#GUI using Tkinter
+#class ChatRoom:
+#    def __init__(self):
+#        window = Tk()
+#        window.title("ChatRoom")
+#        self.text = Text(window)
+#        self.text.pack()
+#        frame1 = Frame(window)
+#        frame1.pack()
+#        label = Label(frame1, text = "En")
+
 def serverInit():
     #host = socket.gethostname()
     host = '127.0.0.1'
