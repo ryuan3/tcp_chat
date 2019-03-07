@@ -17,6 +17,7 @@ def serverInit():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
     s.listen(5)
+    return s
 
 def newConnection(sock, addr):
     print('Accept new connection from %s:%s' % addr)
@@ -38,9 +39,9 @@ def newConnection(sock, addr):
             name_dic[sock] = client_name
             newOneJoined(sock)
         if data[0] == '1':
-            sock.send(('%s: %s' %data[1] %data[2]).encode())
-#    sock.close()
-#    print('Connection from %s:%s closed.' %addr)
+            for client in name_dic.keys():
+                if client != s:
+                    client.send(('%s: %s' %data[1] %data[2]).encode())
 
 def newOneJoined(newSock):
     for client in name_dic.keys():
@@ -52,7 +53,7 @@ def someoneLeft(name):
         if client != s:
             client.send(name + " left the chatroom")
 
-serverInit()
+s = serverInit()
 while True:
     sock, addr = s.accept()
     t = threading.Thread(target=newConnection, args=(sock, addr))
