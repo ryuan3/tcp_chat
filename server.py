@@ -25,13 +25,17 @@ def newConnection(sock, addr):
     while True:
         raw_data = sock.recv(1024).decode()
         time.sleep(1)
-        if raw_data == 'exit' or not raw_data:
+        if not raw_data:
+            break
+        if raw_data == 'exit':
+            someoneLeft(name_dic[sock])
             del name_dic[sock]
             connections_list.remove(sock)
             sock.close()
             print('Connection from %s:%s closed.' %addr)
             break
         data = raw_data.split(',')
+#        print(data)
         if data[0] == '0':
             client_name = data[1]
             sock.send(('Hello, %s!' % data[1]).encode())
@@ -39,19 +43,20 @@ def newConnection(sock, addr):
             name_dic[sock] = client_name
             newOneJoined(sock)
         if data[0] == '1':
+            print("%s: %s" %(data[1],data[2]))
             for client in name_dic.keys():
                 if client != s:
-                    client.send(('%s: %s' %data[1] %data[2]).encode())
+                    client.send(('%s: %s' %(data[1],data[2])).encode())
 
 def newOneJoined(newSock):
     for client in name_dic.keys():
         if client != newSock and client != s:
-            client.send(name_dic[newSock] + " joined the chatroom")
+            client.send(("%s joined the chatroom" %name_dic[newSock]).encode())
 
 def someoneLeft(name):
     for client in name_dic.keys():
         if client != s:
-            client.send(name + " left the chatroom")
+            client.send(("%s left the chatroom" %name).encode())
 
 s = serverInit()
 while True:
